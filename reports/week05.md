@@ -25,7 +25,7 @@ Liikenteen kaappaus suoritettiin Containerlab-ympäristön `web1`-kontissa (`cla
 * **Skannauksen kohde (`web1` IP):** `172.20.20.6` (MAC: `02:42:ac:14:14:06`)
 * **Testatut portit ja palvelimen vastaukset:** Nmap testasi 1000 yleisintä TCP-porttia lähettämällä nopeassa tahdissa TCP `[SYN]` -paketteja. Koska `web1`-kontissa ei ollut käynnissä kuuntelevia verkkopalveluita, kaikki 1000 porttia olivat suljettuja (`Not shown: 1000 closed tcp ports (reset)`), ja `web1` vastasi jokaiseen yhteydenottoyritykseen välittömästi **`[RST, ACK]`** -paketilla.
 
-![Porttiskannaus Wiresharkissa](kuva1_porttiskannaus.png)
+![Porttiskannaus Wiresharkissa](images/kuva1_porttiskannaus.png)
 
 ---
 
@@ -39,7 +39,7 @@ Liikenteen kaappaus suoritettiin Containerlab-ympäristön `web1`-kontissa (`cla
 * **HTTP-pyyntö:** Suodattimella `http` ei näkynyt varsinaisia HTTP-sovelluskerroksen paketteja (`GET / HTTP/1.1`), koska TCP-kolmikättely ei koskaan valmistunut. Suodattimella `tcp.port == 80` havaittiin `curl -v http://172.20.20.6` -komennon lähettämä TCP `[SYN]` -paketti lähdeportista `46898` kohdeporttiin `80`.
 * **HTTP-vastaus:** `web1`-palvelimella ei ollut web-palvelinprosessia (Nginx/Apache) käynnissä, joten se hylkäsi yhteyden suoraan kuljetuskerroksella **`[RST, ACK]`** -paketilla (`Connection refused`).
 
-![DNS-kyselyt ja ICMP-vastaukset Wiresharkissa](kuva2_dns.png)
+![DNS-kyselyt ja ICMP-vastaukset Wiresharkissa](images/kuva2_dns.png)
 
 ---
 
