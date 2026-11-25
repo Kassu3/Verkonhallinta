@@ -1,0 +1,32 @@
+---
+- name: Tarkista verkon saavutettavuus ja r3-branch loopback-konfiguraatio
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Varmista kaikkien reitittimien saavutettavuus
+      ping:
+
+- name: Varmista lo10 ja IP-osoite r3-branch-reitittimella
+  hosts: r3-branch
+  gather_facts: no
+
+  tasks:
+    - name: Tarkista lo10-interfacen tila Linuxissa
+      command: ip addr show lo10
+      register: lo10_status
+      changed_when: false
+
+    - name: Tarkista FRRouting running-config
+      command: vtysh -c "show running-config"
+      register: frr_cfg
+      changed_when: false
+
+    - name: Varmista etta lo10 on olemassa ja osoite on 192.0.2.3/32
+      assert:
+        that:
+          - "'lo10' in lo10_status.stdout"
+          - "'192.0.2.3/32' in lo10_status.stdout"
+          - "'192.0.2.3/32' in frr_cfg.stdout"
+        fail_msg: "VIRHE: lo10 tai osoite 192.0.2.3/32 puuttuu!"
+        success_msg: "OK: lo10 on olemassa ja sen osoite on 192.0.2.3/32."

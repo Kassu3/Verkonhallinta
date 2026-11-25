@@ -1,0 +1,21 @@
+---
+- name: Lisaa lo10 loopback-interface r3-branch-reitittimelle
+  hosts: r3-branch
+  gather_facts: no
+
+  tasks:
+    - name: Tarkista nykyinen FRRouting-konfiguraatio
+      command: vtysh -c "show running-config"
+      register: current_cfg
+      changed_when: false
+
+    - name: Konfiguroi lo10 ja IP-osoite 192.0.2.3/32 FRRoutingiin
+      shell: |
+        ip link show lo10 >/dev/null 2>&1 || ip link add lo10 type dummy
+        ip link set lo10 up
+        vtysh -c "configure terminal" \
+              -c "interface lo10" \
+              -c "ip address 192.0.2.3/32" \
+              -c "end" \
+              -c "write memory"
+      when: "'192.0.2.3/32' not in current_cfg.stdout"

@@ -1,0 +1,20 @@
+---
+- name: Keraa reitittimien perustiedot ja verkkokonfiguraatio
+  hosts: routers
+  gather_facts: yes
+
+  tasks:
+    - name: Hae tarkemmat interface- ja IP-tiedot
+      command: ip -br addr
+      register: ip_brief
+      changed_when: false
+
+    - name: Tulosta keratyt tiedot
+      debug:
+        msg:
+          - "Hostname: {{ ansible_hostname }}"
+          - "Kayttojarjestelma: {{ ansible_distribution }} {{ ansible_distribution_version }} (Kernel {{ ansible_kernel }})"
+          - "Uptime (sekunteina): {{ ansible_uptime_seconds }} s"
+          - "Verkkointerfacet: {{ ansible_interfaces }}"
+          - "IPv4-osoitteet: {{ ansible_all_ipv4_addresses }}"
+          - "Interface-erittely: {{ ip_brief.stdout_lines }}"

@@ -1,0 +1,16 @@
+---
+- name: Varmuuskopioi reitittimien FRRouting-konfiguraatiot
+  hosts: routers
+  gather_facts: no
+
+  tasks:
+    - name: Hae running-config reitittimelta
+      command: vtysh -c "show running-config"
+      register: running_cfg
+      changed_when: false
+
+    - name: Tallenna konfiguraatio backups-hakemistoon
+      copy:
+        content: "{{ running_cfg.stdout }}\n"
+        dest: "../backups/{{ inventory_hostname }}.conf"
+      delegate_to: localhost
